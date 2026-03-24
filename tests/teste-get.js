@@ -1,6 +1,10 @@
 import http from 'k6/http';
 import {check, sleep} from 'k6';
 
+const dados = JSON.parse(open('./data/dados.json'));
+const baseUrl = __ENV.BASE_URL || dados.baseUrl || 'http://localhost:8089';
+const endpoint = dados.endpoints?.departamento || '/api/departamento';
+
 export const options = {
     stages: [
         {duration: '10s', target: 100},
@@ -11,12 +15,14 @@ export const options = {
         {duration: '10s', target: 600},
         {duration: '10s', target: 0},
     ],
+    thresholds: {
+        http_req_failed: ['rate<0.01'],
+        http_req_duration: ['p(95)<800'],
+    },
 };
 
 export default function () {
-    const endpoint = '/api/departamento';
-
-    const res = http.get(`http://localhost:8089${endpoint}`, {
+    const res = http.get(`${baseUrl}${endpoint}`, {
         tags: {
             metodo: 'GET',
             endpoint: endpoint,

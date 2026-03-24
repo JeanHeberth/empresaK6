@@ -1,0 +1,16 @@
+# Ignorar arquivos de resultado de testes de performance
+resultado.json
+resultado-get.txt
+resultado-post.txt
+results/
+
+# Ignorar massa de dados sensível/temporária
+dados.json
+data/dados.json
+
+# Node
+node_modules/
+
+# Outros arquivos temporários
+*.log
+.DS_Store
