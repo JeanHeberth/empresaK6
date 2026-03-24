@@ -1,7 +1,7 @@
 import http from 'k6/http';
 import {check, sleep} from 'k6';
 
-const dados = JSON.parse(open('./data/dados.json'));
+const dados = JSON.parse(open('../data/dados.json'));
 const baseUrl = __ENV.BASE_URL || dados.baseUrl || 'http://localhost:8089';
 const endpoint = dados.endpoints?.departamento || '/api/departamento';
 
