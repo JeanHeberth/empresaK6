@@ -2,14 +2,13 @@ name: K6 Performance Tests
 
 on:
   push:
-    branches:
-      - main
-      - develop
+    branches: [main, develop]
   pull_request:
-    branches:
-      - main
-      - develop
+    branches: [main, develop]
   workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 concurrency:
   group: k6-performance-${{ github.ref }}
@@ -17,11 +16,10 @@ concurrency:
 
 jobs:
   setup:
-    name: Setup
+    name: Setup k6
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout do código
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Instalar k6
         run: |
@@ -36,187 +34,115 @@ jobs:
         run: k6 version
 
   k6_get:
-    name: k6 GET
+    name: 🔵 GET
     runs-on: ubuntu-latest
     needs: setup
     steps:
       - uses: actions/checkout@v4
+      - run: mkdir -p results
 
-      - name: Instalar k6
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gnupg software-properties-common
-          curl -fsSL https://dl.k6.io/key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/k6-archive-keyring.gpg
-          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
-          sudo apt-get update
-          sudo apt-get install -y k6
-
-      - name: Criar pasta de resultados
-        run: mkdir -p results
-
-      - name: Rodar teste-get.js
+      - name: Run GET
         run: |
           k6 run \
-            --summary-export results/teste-get-summary.json \
-            tests/teste-get.js | tee results/teste-get.log
+            --summary-export results/get-summary.json \
+            tests/teste-get.js | tee results/get.log
 
-      - name: Publicar artifacts GET
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: k6-teste-get
+          name: k6-get
           path: results/
 
   k6_post:
-    name: k6 POST
+    name: 🟢 POST
     runs-on: ubuntu-latest
     needs: k6_get
     steps:
       - uses: actions/checkout@v4
+      - run: mkdir -p results
 
-      - name: Instalar k6
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gnupg software-properties-common
-          curl -fsSL https://dl.k6.io/key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/k6-archive-keyring.gpg
-          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
-          sudo apt-get update
-          sudo apt-get install -y k6
-
-      - name: Criar pasta de resultados
-        run: mkdir -p results
-
-      - name: Rodar teste-post.js
+      - name: Run POST
         run: |
           k6 run \
-            --summary-export results/teste-post-summary.json \
-            tests/teste-post.js | tee results/teste-post.log
+            --summary-export results/post-summary.json \
+            tests/teste-post.js | tee results/post.log
 
-      - name: Publicar artifacts POST
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: k6-teste-post
+          name: k6-post
           path: results/
 
   k6_put:
-    name: k6 PUT
+    name: 🟡 PUT
     runs-on: ubuntu-latest
     needs: k6_post
     steps:
       - uses: actions/checkout@v4
+      - run: mkdir -p results
 
-      - name: Instalar k6
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gnupg software-properties-common
-          curl -fsSL https://dl.k6.io/key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/k6-archive-keyring.gpg
-          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
-          sudo apt-get update
-          sudo apt-get install -y k6
-
-      - name: Criar pasta de resultados
-        run: mkdir -p results
-
-      - name: Rodar teste-put.js
+      - name: Run PUT
         run: |
           k6 run \
-            --summary-export results/teste-put-summary.json \
-            tests/teste-put.js | tee results/teste-put.log
+            --summary-export results/put-summary.json \
+            tests/teste-put.js | tee results/put.log
 
-      - name: Publicar artifacts PUT
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: k6-teste-put
+          name: k6-put
           path: results/
 
   k6_delete:
-    name: k6 DELETE
+    name: 🔴 DELETE
     runs-on: ubuntu-latest
     needs: k6_put
     steps:
       - uses: actions/checkout@v4
+      - run: mkdir -p results
 
-      - name: Instalar k6
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gnupg software-properties-common
-          curl -fsSL https://dl.k6.io/key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/k6-archive-keyring.gpg
-          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
-          sudo apt-get update
-          sudo apt-get install -y k6
-
-      - name: Criar pasta de resultados
-        run: mkdir -p results
-
-      - name: Rodar teste-delete.js
+      - name: Run DELETE
         run: |
           k6 run \
-            --summary-export results/teste-delete-summary.json \
-            tests/teste-delete.js | tee results/teste-delete.log
+            --summary-export results/delete-summary.json \
+            tests/teste-delete.js | tee results/delete.log
 
-      - name: Publicar artifacts DELETE
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: k6-teste-delete
+          name: k6-delete
           path: results/
 
   k6_crud:
-    name: k6 CRUD
+    name: ⚙️ CRUD
     runs-on: ubuntu-latest
     needs: k6_delete
     steps:
       - uses: actions/checkout@v4
+      - run: mkdir -p results
 
-      - name: Instalar k6
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gnupg software-properties-common
-          curl -fsSL https://dl.k6.io/key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/k6-archive-keyring.gpg
-          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
-          sudo apt-get update
-          sudo apt-get install -y k6
-
-      - name: Criar pasta de resultados
-        run: mkdir -p results
-
-      - name: Rodar teste-crud.js
+      - name: Run CRUD
         run: |
           k6 run \
-            --summary-export results/teste-crud-summary.json \
-            tests/teste-crud.js | tee results/teste-crud.log
+            --summary-export results/crud-summary.json \
+            tests/teste-crud.js | tee results/crud.log
 
-      - name: Publicar artifacts CRUD
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: k6-teste-crud
+          name: k6-crud
           path: results/
 
   k6_crud_producao:
-    name: k6 CRUD Produção
+    name: 🚀 PRODUÇÃO
     runs-on: ubuntu-latest
     needs: k6_crud
     steps:
       - uses: actions/checkout@v4
+      - run: mkdir -p results
 
-      - name: Instalar k6
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gnupg software-properties-common
-          curl -fsSL https://dl.k6.io/key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/k6-archive-keyring.gpg
-          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
-          sudo apt-get update
-          sudo apt-get install -y k6
-
-      - name: Criar pasta de resultados
-        run: mkdir -p results
-
-      - name: Rodar teste-crud-producao.js
+      - name: Run CRUD Produção
         run: |
           k6 run \
-            --summary-export results/teste-crud-producao-summary.json \
-            tests/teste-crud-producao.js | tee results/teste-crud-producao.log
+            --summary-export results/prod-summary.json \
+            tests/teste-crud-producao.js | tee results/prod.log
 
-      - name: Publicar artifacts CRUD Produção
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: k6-teste-crud-producao
+          name: k6-producao
           path: results/
