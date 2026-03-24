@@ -17,9 +17,10 @@ const endpoint = dados.endpoints?.departamento || '/api/departamento';
 
 export const options = {
     stages: [
-        { duration: '10s', target: 10 },
-        { duration: '10s', target: 30 },
-        { duration: '10s', target: 50 },
+        { duration: '10s', target: 100 },
+        { duration: '10s', target: 300 },
+        { duration: '10s', target: 500 },
+        { duration: '10s', target: 900 },
         { duration: '10s', target: 0 },
     ],
     thresholds: {
