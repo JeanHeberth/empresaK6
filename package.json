@@ -1,0 +1,17 @@
+{
+  "name": "empresak6",
+  "version": "1.0.0",
+  "description": "",
+  "main": "teste-get.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JeanHeberth/empresaK6.git"
+  },
+  "private": true,
+  "devDependencies": {
+    "k6": "^0.0.0"
+  }
+}
