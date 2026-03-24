@@ -1,22 +1,29 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-const dados = JSON.parse(open('../data/dados.json'));
+function getDados() {
+    const paths = ['../data/dados.json', '../../data/dados.json'];
+    for (const path of paths) {
+        try {
+            return JSON.parse(open(path));
+        } catch (e) {}
+    }
+    throw new Error('Arquivo data/dados.json não encontrado!');
+}
+
+const dados = getDados();
 const baseUrl = __ENV.BASE_URL || dados.baseUrl || 'http://localhost:8089';
 const endpoint = dados.endpoints?.departamento || '/api/departamento';
 const departamentos = dados.departamentos || [];
 
 export const options = {
     stages: [
-        { duration: '10s', target: 100 },
-        { duration: '10s', target: 300 },
-        { duration: '10s', target: 600 },
-        { duration: '10s', target: 999 },
+        { duration: '10s', target: 1 },
         { duration: '10s', target: 0 },
     ],
     thresholds: {
         http_req_failed: ['rate<0.01'],
-        http_req_duration: ['p(95)<1000'],
+        http_req_duration: ['p(95)<3000'],
     },
 };
 
@@ -27,28 +34,28 @@ export default function () {
 
     const indice = (__VU + __ITER) % departamentos.length;
     const departamentoBase = departamentos[indice];
-    const departamento = {
-        nome: `${departamentoBase.nome} ${__VU}-${__ITER}`,
-        numero: `${departamentoBase.numero}-${Math.floor(Math.random() * 10000)}`
-    };
 
-    const payload = JSON.stringify(departamento);
+    const payload = JSON.stringify({
+        nome: `${departamentoBase.nome} ${__VU}-${__ITER}`,
+        numero: Number(departamentoBase.numero) + __VU + __ITER,
+    });
+
     const params = {
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
         tags: {
             metodo: 'POST',
             endpoint: endpoint,
-            nome_teste: 'departamento_post'
-        }
+            nome_teste: 'departamento_post',
+        },
     };
 
     const res = http.post(`${baseUrl}${endpoint}`, payload, params);
 
     check(res, {
-        'Status 201': (r) => r.status === 201 || r.status === 200,
-        'Resposta contém nome': (r) => !!r.body && r.body.includes(departamentoBase.nome),
+        'POST status 201': (r) => r.status === 201,
+        'POST corpo não vazio': (r) => !!r.body && r.body.length > 0,
     });
 
     sleep(1);

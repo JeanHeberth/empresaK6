@@ -39,38 +39,32 @@ export default function () {
     const lista = pagina?.content || [];
 
     check(listRes, {
-        'PUT busca prévia status 200': (r) => r.status === 200,
+        'DELETE busca prévia status 200': (r) => r.status === 200,
     });
 
     if (!Array.isArray(lista) || lista.length === 0) {
-        throw new Error('Nenhum departamento encontrado para atualizar.');
+        throw new Error('Nenhum departamento encontrado para deletar.');
     }
 
     const indice = (__VU + __ITER) % lista.length;
     const registro = lista[indice];
     const id = registro.id;
 
-    const payload = JSON.stringify({
-        nome: `Atualizado ${__VU}-${__ITER}`,
-        numero: 1000 + __VU + __ITER,
-    });
-
     const params = {
         headers: {
             'Content-Type': 'application/json',
         },
         tags: {
-            metodo: 'PUT',
+            metodo: 'DELETE',
             endpoint: endpoint,
-            nome_teste: 'departamento_put',
+            nome_teste: 'departamento_delete',
         },
     };
 
-    const res = http.put(`${baseUrl}${endpoint}/${id}`, payload, params);
+    const res = http.del(`${baseUrl}${endpoint}/${id}`, null, params);
 
     check(res, {
-        'PUT status 200': (r) => r.status === 200,
-        'PUT corpo não vazio': (r) => !!r.body && r.body.length > 0,
+        'DELETE status 204': (r) => r.status === 204,
     });
 
     sleep(1);

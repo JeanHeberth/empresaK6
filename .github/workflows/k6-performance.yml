@@ -19,8 +19,10 @@ jobs:
       fail-fast: false
       matrix:
         script:
-          - teste-get-stages.js
+          - teste-get.js
           - teste-post.js
+          - teste-put.js
+          - teste-delete.js
 
     steps:
       - name: Checkout do código
