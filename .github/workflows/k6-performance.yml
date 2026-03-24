@@ -23,6 +23,7 @@ jobs:
           - teste-post.js
           - teste-put.js
           - teste-delete.js
+          - teste-crud.js
 
     steps:
       - name: Checkout do código
