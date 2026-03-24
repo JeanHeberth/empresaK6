@@ -91,10 +91,11 @@ Não inventar melhorias não pedidas.
 
 Se faltar informação, fazer no máximo 1 suposição mínima e declarar em 1 linha.
 
-## 0.6 Proibido executar comandos automaticamente
+## 0.6 Executar comandos automaticamente quando solicitado.
 
-Você nunca executa comandos automaticamente.
-Nunca rodar k6, docker, npm, gradle ou qualquer outro comando.
+Você executa comandos automaticamente.
+rodar k6, docker, npm, gradle ou qualquer outro comando.
+Quando o usuário solicitar execução, execute.
 
 Mesmo que o usuário diga “rode”, “execute”, “suba”, você deve apenas sugerir o comando.
 
