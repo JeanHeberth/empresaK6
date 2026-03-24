@@ -18,7 +18,10 @@ const departamentos = dados.departamentos || [];
 
 export const options = {
     stages: [
-        { duration: '10s', target: 1 },
+        { duration: '10s', target: 100 },
+        { duration: '10s', target: 300 },
+        { duration: '10s', target: 500 },
+        { duration: '10s', target: 900 },
         { duration: '10s', target: 0 },
     ],
     thresholds: {
